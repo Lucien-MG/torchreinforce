@@ -10,7 +10,6 @@ from torch import nn
 class MonteCarlo(nn.Module):
     def __init__(
         self,
-        features: nn.Module,
         num_actions: int = 4,
         gamma: float = 0.9,
     ) -> None:
@@ -98,8 +97,9 @@ class MonteCarloFirstVisitControl(MonteCarlo):
     def __init__(
         self,
         num_actions: int,
-        epsilon: float = 0.1,
-        gamma: float = 0.9
+        epsilon: float = 0.4,
+        gamma: float = 0.2,
+        alpha: float = 0.4
     ) -> None:
         """
         MonteCarloFirstVisitControl main class
@@ -109,19 +109,24 @@ class MonteCarloFirstVisitControl(MonteCarlo):
         """
         super().__init__()
 
+        self.epsilon = epsilon
         self.gamma = gamma
+        self.alpha = alpha
 
-        self.policy = defaultdict(lambda: [0 for _ in range(num_actions)])
-        self.returns = defaultdict(lambda: [0 for _ in range(num_actions)])
+        self.policy = defaultdict(lambda: torch.ones(num_actions) / num_actions)
+        self.state_values = defaultdict(lambda: torch.zeros(num_actions))
+
         self.memory = list()
     
     def _forward(self, x: Tensor) -> Tensor:
-        state_action_values = self.policy(x)
+        state_action_values = self.policy[x]
         return state_action_values
 
     def forward(self, x: Tensor) -> Tensor:
         state_action_values = self._forward(x)
-        outputs = torch.argmax(state_action_values)
+        action_probs = torch.distributions.binomial.Binomial(10, probs=state_action_values).sample()
+        outputs = torch.argmax(action_probs)
+        
         return outputs
     
     def push(self, observation, action, reward, done):
@@ -129,10 +134,20 @@ class MonteCarloFirstVisitControl(MonteCarlo):
 
         if done:
             discounted_reward = 0
-            for experience in done.reverse():
+            self.memory.reverse()
+
+            for experience in self.memory:
                 observation, action, reward, done = experience
                 discounted_reward = self.gamma * discounted_reward + reward
-                self.returns[observation].append()
+
+                self.state_values[observation][action] += (1 / self.alpha) * (discounted_reward - self.state_values[observation][action])
+
+                optimal_action = torch.argmax(self.state_values[observation])
+
+                self.policy[observation][:] = self.epsilon / len(self.policy[observation])
+                self.policy[observation][optimal_action] = 1 - self.epsilon + (self.epsilon / len(self.policy[observation]))
+            
+            self.memory = []
 
 
 
