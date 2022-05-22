@@ -5,6 +5,7 @@ from typing import Optional, Tuple, List, Callable, Any
 
 import torch
 from torch import Tensor
+from torch import distributions
 from torch import nn
 
 class MonteCarlo(nn.Module):
@@ -124,7 +125,7 @@ class MonteCarloFirstVisitControl(MonteCarlo):
 
     def forward(self, x: Tensor) -> Tensor:
         state_action_values = self._forward(x)
-        action_probs = torch.distributions.binomial.Binomial(10, probs=state_action_values).sample()
+        action_probs = distributions.binomial.Binomial(10, probs=state_action_values).sample()
         outputs = torch.argmax(action_probs)
         
         return outputs
