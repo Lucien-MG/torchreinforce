@@ -17,14 +17,14 @@ def frozenlake_simple_qlearning():
 
 def frozenlake_8x8_qlearning():
     env = gym.make('FrozenLake-v1', desc=frozenlake_maps_8x8["8x8"], is_slippery=False)
-    agent = Qlearning(num_actions=4, epsilon=0.9, gamma=0.8, alpha=0.1)
+    agent = Qlearning(num_actions=4, epsilon=0.99, gamma=0.8, alpha=0.1)
     
-    train(env, agent, num_episodes=10000)
+    train(env, agent, num_episodes=100000)
     render(env, agent)
 
 def frozenlake_slippery_qlearning():
     env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
-    agent = Qlearning(num_actions=4, epsilon=0.99, gamma=0.8, alpha=0.1)
+    agent = Qlearning(num_actions=4, epsilon=0.99, gamma=0.8, alpha=0.4)
     
     train(env, agent, num_episodes=50000)
     render(env, agent)
