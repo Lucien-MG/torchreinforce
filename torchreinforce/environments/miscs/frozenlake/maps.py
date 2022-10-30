@@ -55,14 +55,14 @@ frozenlake_maps_8x8 = {
         "FFFHFFFG",
     ],
 
-    "8x8": [
-        "SFFFFFFF",
+    "8x8_hard": [
+        "SFHFFFFF",
         "FFFFFFFF",
-        "FFFHFFFF",
+        "HFFHFFFF",
         "FFFFFHFF",
         "FFFHFFFF",
         "FHHFFFHF",
         "FHFFHFHF",
-        "FFFHFFFG",
+        "HGFHFFFF",
     ]
 }

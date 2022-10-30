@@ -7,6 +7,7 @@ authors = ["Lucien Martin-Gaffé <lucien.martingaffe@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 torch = "^1.11.0"
+tensorboard = {version = "^2.9.0", extras = ["tensorboard"]}
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"

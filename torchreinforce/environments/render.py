@@ -10,7 +10,7 @@ def render(env, agent, sleep_time=0):
     env.render()
 
     while not done:
-        action = agent.forward(observation).item()
+        action = agent.forward(observation)
         new_observation, reward, done, info = env.step(action)
 
         env.render()
